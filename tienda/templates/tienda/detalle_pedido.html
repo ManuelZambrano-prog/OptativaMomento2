@@ -13,22 +13,31 @@
 </p>
 {% if items %}
     <table>
-        <tr>
-            <th class="encabezado">Producto</th>
-            <th class="encabezado">Cantidad</th>
-            <th class="encabezado">Precio Unitario</th>
-            <th class="encabezado">Subtotal</th>
-        </tr>
-        {% for it in items %}
+        <thead>
             <tr>
-                <td>{{ it.producto.nombre }}</td>
-                <td>{{ it.cantidad }}</td>
-                <td>${{ it.precio_unitario|floatformat:2 }}</td>
-                <td>${{ it.line_total|floatformat:2 }}</td>
+                <th class="encabezado">Producto</th>
+                <th class="encabezado">Cantidad</th>
+                <th class="encabezado">Precio Unitario</th>
+                <th class="encabezado">Subtotal</th>
             </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+            {% for it in items %}
+                <tr>
+                    <td>{{ it.producto.nombre }}</td>
+                    <td>{{ it.cantidad }}</td>
+                    <td>${{ it.precio_unitario|floatformat:2 }}</td>
+                    <td>${{ it.line_total|floatformat:2 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Este pedido no tiene ítems.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% else %}
+    <p>No hay productos en este pedido.</p>
 {% endif %}
 
 {% endblock %}
