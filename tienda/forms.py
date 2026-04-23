@@ -55,7 +55,7 @@ class PedidoItemsForm(forms.ModelForm):
         fields = ["producto", "cantidad", "precio_unitario"]
         widgets = {
             "cantidad": forms.NumberInput(attrs={"min": "1","step": "1"}),
-            "precio_unitarios": forms.NumberInput(attrs={"min": "0","step": "0.01"}),
+            "precio_unitario": forms.NumberInput(attrs={"min": "0","step": "0.01"}),
         }
 
 PedidoItemFormSet = inlineformset_factory(

@@ -11,6 +11,8 @@
 
     <fieldset>
         <legend>Items</legend>
+        {{ formset.management_form }}
+        {{ formset.non_form_errors }}
         {% for form in formset %}
             <div class="pedido-item-form">
                 {{ form.as_p }}

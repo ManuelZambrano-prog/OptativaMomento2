@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum, F 
 
 # Create your models here.
 class Producto(models.Model):
@@ -31,6 +32,16 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"Pedido #{self.pk} - {self.cliente.nombre} ({self.estado})"
+
+    def total_productos(self):
+        """Suma de las cantidades de todos los items del pedido"""
+        resultado = self.items.aggregate(total=Sum('cantidad'))['total']
+        return resultado if resultado is not None else 0
+
+    def total_precio(self):
+        """Suma del precio total (cantidad * precio_unitario) de todos los items"""
+        resultado = self.items.aggregate(total=Sum(F('cantidad') * F('precio_unitario')))['total']
+        return resultado if resultado is not None else 0
 
 class PedidoItem(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items")

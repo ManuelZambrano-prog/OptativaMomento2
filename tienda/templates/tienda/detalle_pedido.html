@@ -8,6 +8,9 @@
 <p><b>Estado:</b>{{ pedido.estado }}</p>
 
 <h3>Productos</h3>
+<p>
+    <a href="{% url 'tienda:eliminar_pedido' pedido.pk %}" class="btn delete">Eliminar pedido</a>
+</p>
 {% if items %}
     <table>
         <tr>
@@ -16,12 +19,12 @@
             <th class="encabezado">Precio Unitario</th>
             <th class="encabezado">Subtotal</th>
         </tr>
-        {% for it in items%}
+        {% for it in items %}
             <tr>
                 <td>{{ it.producto.nombre }}</td>
                 <td>{{ it.cantidad }}</td>
                 <td>${{ it.precio_unitario|floatformat:2 }}</td>
-                <td>${{ it.inline_total|floatformat:2 }}</td>
+                <td>${{ it.line_total|floatformat:2 }}</td>
             </tr>
         {% endfor %}
     </table>

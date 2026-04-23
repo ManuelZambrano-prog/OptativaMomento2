@@ -31,20 +31,13 @@ def detalle_producto(request, pk):
 vista para mostrar los pedidos
 '''
 
-def pedidos(request):
-    pedidos = pedidos.objects.all().order_by("fecha")
-    return render(request, "tienda/pedidos.html", {"pedidos": pedidos})
-
 '''
 vista que lista los pedidos
 '''
 
 def lista_pedidos(request):
-    pedidos = Pedido.objects.annotate(
-        total_productos= Sum("items__cantidad"),
-        total_precio= Sum(F("items__cantidad") * F("items__precio_unitario"))
-    )
-    return render(request, "tienda/lista_pedidos.html", {"pedidos":pedidos})
+    pedidos = Pedido.objects.select_related("cliente").prefetch_related("items").order_by("-fecha")
+    return render(request, "tienda/lista_pedidos.html", {"pedidos": pedidos})
 
 '''
 vista de detalle del pedidos
@@ -81,7 +74,7 @@ def eliminar_pedido(request, pk):
 Crear pedido con Items
 '''
 @transaction.atomic
-def crear_pedido(request):
+def crear_pedido_items(request):
     if request.method == "POST":
         pedido_form = PedidoSimpleForm(request.POST)
         if pedido_form.is_valid():
@@ -100,7 +93,7 @@ def crear_pedido(request):
     productos = Producto.objects.all()
     productos_dict = {str(p.id): float(p.precio) for p in productos}
 
-    return render(request, "tienda/crear_pedido.html",{
+    return render(request, "tienda/crear_pedido_items.html",{
         "pedido_form": pedido_form,
         "formset": formset,
         "productos": productos_dict
@@ -111,7 +104,7 @@ Editar un pedido
 '''
 
 @transaction.atomic
-def editar_pedido(request, pk):
+def editar_pedido_items(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
 
     if request.method == "POST":
@@ -138,7 +131,7 @@ vista de detalle de un cliente
 
 def detalle_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
-    pedidos = cliente.pedidos.select_related('cliente').prefetch_related('productos').order_by('-fecha')
+    pedidos = cliente.pedidos.select_related('cliente').prefetch_related('items').order_by('-fecha')
     return render(request, "tienda/detalle_cliente.html", {"cliente": cliente, "pedidos": pedidos})
 
 '''
@@ -191,7 +184,7 @@ def eliminar_cliente(request, pk):
 
 
 def lista_pedidos(request):
-    pedidos = Pedido.objects.select_related("cliente").prefetch_related("productos").order_by("-fecha")
+    pedidos = Pedido.objects.select_related("cliente").prefetch_related("items").order_by("-fecha")
     return render(request, "tienda/lista_pedidos.html", {"pedidos":pedidos})
 
     
