@@ -4,7 +4,8 @@ from django.db.models import Sum, F
 from .models import Producto, Cliente, Pedido
 from.forms import ProductoForm, ClienteForm, PedidoSimpleForm, PedidoItemFormSet
 from tienda import models
-
+from django.views.decorators.http import require_GET
+from core.ia.buscador import buscar_productos
 '''
 Vista de inicio
 '''
@@ -223,3 +224,14 @@ def eliminar_producto(request, pk):
     return render(request, "tienda/eliminar_producto.html", {"producto": producto})
 
 
+#Vista para buscar
+
+@require_GET
+def buscar_view(request):
+    q = request.GET.get("q", "")
+    resultados = buscar_productos(q, k=5) if q else []
+
+    return render(request, "tienda/buscar.html", {
+        "q": q, 
+        "resultados": resultados,
+        })
